@@ -10,6 +10,12 @@
     state: present
   when: civicrm == 'Yes'
 
+- name: Create CRM logging database
+  mysql_db:
+    name: "{{ crm_logging_db_name }}"
+    state: present
+  when: civicrm == 'Yes' and crm_logging_db_name|default('blank', True) != 'blank'
+
 - name: Create MySQL User and set db permissions
   mysql_user:
     name: "{{ db_user }}"
