@@ -1,25 +1,27 @@
 ---
-- name: Create CMS database
-  mysql_db:
-    name: "{{ cms_db_name }}"
-    state: present
+- block:
+  - name: Create CMS database
+    mysql_db:
+      name: "{{ cms_db_name }}"
+      state: present
 
-- name: Create CRM database
-  mysql_db:
-    name: "{{ crm_db_name }}"
-    state: present
-  when: civicrm == 'Yes'
+  - name: Create CRM database
+    mysql_db:
+      name: "{{ crm_db_name }}"
+      state: present
+    when: civicrm == 'Yes'
 
-- name: Create CRM logging database
-  mysql_db:
-    name: "{{ crm_logging_db_name }}"
-    state: present
-  when: civicrm == 'Yes' and crm_logging_db_name|default('blank', True) != 'blank'
+  - name: Create CRM logging database
+    mysql_db:
+      name: "{{ crm_logging_db_name }}"
+      state: present
+    when: civicrm == 'Yes' and crm_logging_db_name|default('blank', True) != 'blank'
 
-- name: Create MySQL User and set db permissions
-  mysql_user:
-    name: "{{ db_user }}"
-    password: "{{ lookup('passwordstore', client + '/' + hostname + '/' + bare_url + '/mysql create=true length=32 nosymbols=yes') }}"
-    priv: "{{ cms_db_name }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,LOCK TABLES,CREATE TEMPORARY TABLES,CREATE VIEW/{{ crm_db_name }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,LOCK TABLES,CREATE TEMPORARY TABLES,TRIGGER,CREATE ROUTINE,ALTER ROUTINE,CREATE VIEW,SHOW VIEW,REFERENCES{% if crm_logging_db_name|default('blank', True) != 'blank' %}/{{ crm_logging_db_name }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,LOCK TABLES,CREATE TEMPORARY TABLES,TRIGGER,CREATE ROUTINE,ALTER ROUTINE,CREATE VIEW,REFERENCES{% endif %}"
-    host: 'localhost'
-    state: present
+  - name: Create MySQL User and set db permissions
+    mysql_user:
+      name: "{{ db_user }}"
+      password: "{{ lookup('passwordstore', client + '/' + hostname + '/' + bare_url + '/mysql create=true length=32 nosymbols=yes') }}"
+      priv: "{{ cms_db_name }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,LOCK TABLES,CREATE TEMPORARY TABLES,CREATE VIEW/{{ crm_db_name }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,LOCK TABLES,CREATE TEMPORARY TABLES,TRIGGER,CREATE ROUTINE,ALTER ROUTINE,CREATE VIEW,SHOW VIEW,REFERENCES{% if crm_logging_db_name|default('blank', True) != 'blank' %}/{{ crm_logging_db_name }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,LOCK TABLES,CREATE TEMPORARY TABLES,TRIGGER,CREATE ROUTINE,ALTER ROUTINE,CREATE VIEW,REFERENCES{% endif %}"
+      host: 'localhost'
+      state: present
+  when: cms != 'Static'
