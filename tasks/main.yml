@@ -25,4 +25,12 @@
       host: 'localhost'
       state: present
       append_privs: yes
+
+  - name: Create a .my.cnf
+    ansible.builtin.template:
+      src: templates/my.cnf.j2
+      dest: "$HOME/.my.cnf"
+    become_user: "{{ run_as_user }}"
+    tags: my.cnf
+
   when: cms != 'Static'

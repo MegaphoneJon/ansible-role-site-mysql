@@ -1,0 +1,3 @@
+[client]
+user={{ db_user }}
+password={{ lookup('passwordstore', client + '/' + hostname + '/' + bare_url + '/mysql') }}
