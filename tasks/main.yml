@@ -20,7 +20,7 @@
   - name: Create MySQL User and set db permissions
     mysql_user:
       name: "{{ db_user }}"
-      password: "{{ lookup('passwordstore', client + '/' + hostname + '/' + bare_url + '/mysql create=true length=32 nosymbols=yes') }}"
+      password: "{{ lookup('community.general.passwordstore', client + '/' + hostname + '/' + bare_url + '/mysql create=true length=32 nosymbols=yes') }}"
       priv: "{{ cms_db_name }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,LOCK TABLES,CREATE TEMPORARY TABLES,CREATE VIEW{% if crm_db_name|default('blank', True) != 'blank' %}/{{ crm_db_name }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,LOCK TABLES,CREATE TEMPORARY TABLES,TRIGGER,CREATE ROUTINE,ALTER ROUTINE,CREATE VIEW,SHOW VIEW,REFERENCES{% endif %}{% if crm_logging_db_name|default('blank', True) != 'blank' %}/{{ crm_logging_db_name }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,LOCK TABLES,CREATE TEMPORARY TABLES,TRIGGER,CREATE ROUTINE,ALTER ROUTINE,CREATE VIEW,SHOW VIEW,REFERENCES{% endif %}"
       host: 'localhost'
       state: present
